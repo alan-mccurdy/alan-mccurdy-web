@@ -15,14 +15,14 @@
 
     :root {
       --black: #0a0a0a;
-      --dark: #111111;
-      --card: #1a1a1a;
-      --border: #2a2a2a;
+      --dark: #110b0b;
+      --card: #1a0e0e;
+      --border: #2d1a1a;
       --white: #ffffff;
       --gray: #888888;
-      --accent: #c9a84c;
-      --accent2: #e8c97a;
-      --gradient: linear-gradient(135deg, #c9a84c 0%, #e8c97a 50%, #c9a84c 100%);
+      --accent: #8b1a2a;
+      --accent2: #c0202f;
+      --gradient: linear-gradient(135deg, #6b0f1c 0%, #c0202f 50%, #6b0f1c 100%);
     }
 
     html { scroll-behavior: smooth; }
@@ -91,7 +91,7 @@
 
     .nav-cta {
       background: var(--gradient);
-      color: var(--black) !important;
+      color: var(--white) !important;
       padding: 9px 20px;
       border-radius: 100px;
       font-weight: 700 !important;
@@ -113,7 +113,7 @@
       position: absolute;
       width: 700px; height: 700px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(201,168,76,.13) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(139,26,42,.2) 0%, transparent 70%);
       top: 50%; left: 50%;
       transform: translate(-50%, -50%);
       pointer-events: none;
@@ -155,8 +155,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(201,168,76,.1);
-      border: 1px solid rgba(201,168,76,.25);
+      background: rgba(139,26,42,.12);
+      border: 1px solid rgba(139,26,42,.4);
       color: var(--accent2);
       font-size: .72rem;
       font-weight: 600;
@@ -237,12 +237,13 @@
       font-size: .92rem;
       text-decoration: none;
       transition: transform .3s, box-shadow .3s;
-      box-shadow: 0 0 28px rgba(201,168,76,.28);
+      box-shadow: 0 0 28px rgba(139,26,42,.4);
+      color: var(--white);
     }
 
     .btn-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 36px rgba(201,168,76,.4);
+      box-shadow: 0 8px 36px rgba(139,26,42,.6);
     }
 
     .btn-secondary {
@@ -258,8 +259,8 @@
     }
 
     .btn-secondary:hover {
-      border-color: var(--accent);
-      background: rgba(201,168,76,.06);
+      border-color: var(--accent2);
+      background: rgba(139,26,42,.08);
     }
 
     .scroll-indicator {
@@ -378,7 +379,8 @@
       font-weight: 700;
       font-size: .85rem;
       text-align: center;
-      box-shadow: 0 8px 28px rgba(201,168,76,.3);
+      box-shadow: 0 8px 28px rgba(139,26,42,.4);
+      color: var(--white);
     }
 
     .float-card-num { font-size: 1.7rem; display: block; font-weight: 900; }
@@ -396,8 +398,8 @@
     }
 
     .tag {
-      background: rgba(201,168,76,.08);
-      border: 1px solid rgba(201,168,76,.2);
+      background: rgba(139,26,42,.1);
+      border: 1px solid rgba(139,26,42,.35);
       color: var(--accent2);
       padding: 5px 13px;
       border-radius: 100px;
@@ -485,11 +487,11 @@
     }
 
     .service-card:hover::before { transform: scaleX(1); }
-    .service-card:hover { border-color: rgba(201,168,76,.28); transform: translateY(-4px); }
+    .service-card:hover { border-color: rgba(139,26,42,.45); transform: translateY(-4px); }
 
     .service-icon {
       width: 50px; height: 50px;
-      background: rgba(201,168,76,.1);
+      background: rgba(139,26,42,.12);
       border-radius: 13px;
       display: flex; align-items: center;
       justify-content: center;
@@ -562,8 +564,8 @@
     #cta { background: var(--dark); text-align: center; }
 
     .cta-box {
-      background: radial-gradient(ellipse at center top, rgba(201,168,76,.1) 0%, transparent 65%);
-      border: 1px solid rgba(201,168,76,.18);
+      background: radial-gradient(ellipse at center top, rgba(139,26,42,.14) 0%, transparent 65%);
+      border: 1px solid rgba(139,26,42,.28);
       border-radius: 30px;
       padding: 76px 36px;
       position: relative;
@@ -606,7 +608,7 @@
       transition: border-color .3s, background .3s;
     }
 
-    .social-btn:hover { border-color: var(--accent); background: rgba(201,168,76,.07); }
+    .social-btn:hover { border-color: var(--accent2); background: rgba(139,26,42,.1); }
 
     /* FOOTER */
     footer {
@@ -748,7 +750,7 @@
           </div>
           <div class="float-card">
             <span class="float-card-num">✦</span>
-            Creador<br>Digital
+            Creador<br>digital
           </div>
         </div>
 
@@ -765,8 +767,8 @@
             Mi objetivo es simple: <strong>crear contenido que importe</strong>, colaborar con marcas que comparten mis valores y seguir creciendo junto a mi comunidad día a día.
           </p>
           <div class="tags">
-            <span class="tag">✦ Contenido Digital</span>
-            <span class="tag">✦ Personal Branding</span>
+            <span class="tag">✦ Contenido digital</span>
+            <span class="tag">✦ Personal branding</span>
             <span class="tag">✦ Colaboraciones</span>
             <span class="tag">✦ Fotografía</span>
             <span class="tag">✦ Lifestyle</span>
@@ -801,11 +803,11 @@
         </div>
         <div class="ig-item">
           <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a0a1a,#120a1f);">🎬</div>
-          <div class="ig-overlay"><div class="ig-overlay-title">Video & Reels</div><div class="ig-overlay-text">Contenido dinámico de alta retención</div></div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Video & reels</div><div class="ig-overlay-text">Contenido dinámico de alta retención</div></div>
         </div>
         <div class="ig-item">
           <div class="ig-item-inner" style="background:linear-gradient(135deg,#0a1520,#0a1025);">💡</div>
-          <div class="ig-overlay"><div class="ig-overlay-title">Tips & Valor</div><div class="ig-overlay-text">Conocimiento accionable para mi comunidad</div></div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Tips & valor</div><div class="ig-overlay-text">Conocimiento accionable para mi comunidad</div></div>
         </div>
         <div class="ig-item">
           <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a1010,#1a0f0a);">🤝</div>
@@ -845,7 +847,7 @@
         </div>
         <div class="service-card reveal reveal-delay-2">
           <div class="service-icon">🎥</div>
-          <div class="service-title">Contenido para Redes</div>
+          <div class="service-title">Contenido para redes</div>
           <div class="service-desc">Producción de posts, reels y stories con estrategia y estética cuidada. Cada pieza diseñada para generar engagement real.</div>
           <a href="#cta" class="service-link">Ver propuesta →</a>
         </div>
@@ -857,7 +859,7 @@
         </div>
         <div class="service-card reveal reveal-delay-4">
           <div class="service-icon">📊</div>
-          <div class="service-title">Consultoría de Contenido</div>
+          <div class="service-title">Consultoría de contenido</div>
           <div class="service-desc">Revisamos tu estrategia y definimos un plan para crecer tu presencia digital de forma consistente y sostenible.</div>
           <a href="#cta" class="service-link">Agendar sesión →</a>
         </div>
@@ -869,7 +871,7 @@
         </div>
         <div class="service-card reveal reveal-delay-2">
           <div class="service-icon">🎯</div>
-          <div class="service-title">Proyectos Especiales</div>
+          <div class="service-title">Proyectos especiales</div>
           <div class="service-desc">Eventos, campañas, lanzamientos — cualquier proyecto creativo que necesite una voz auténtica y audiencia comprometida.</div>
           <a href="#cta" class="service-link">Cuéntame tu idea →</a>
         </div>
