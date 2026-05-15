@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alan McCurdy — @alan_mccurdy</title>
+  <meta name="description" content="Página oficial de Alan McCurdy — Contenido, colaboraciones y más." />
+  <meta property="og:title" content="Alan McCurdy" />
+  <meta property="og:description" content="Sigue mi contenido en Instagram @alan_mccurdy" />
+  <meta property="og:image" content="https://unavatar.io/instagram/alan_mccurdy" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --dark: #111111;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --white: #ffffff;
+      --gray: #888888;
+      --accent: #c9a84c;
+      --accent2: #e8c97a;
+      --gradient: linear-gradient(135deg, #c9a84c 0%, #e8c97a 50%, #c9a84c 100%);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: .4;
+    }
+
+    section, nav, footer { position: relative; z-index: 1; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 18px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(20px);
+      background: rgba(10,10,10,.7);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      transition: background .3s;
+    }
+
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: .05em;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: .82rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: color .3s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      background: var(--gradient);
+      color: var(--black) !important;
+      padding: 9px 20px;
+      border-radius: 100px;
+      font-weight: 700 !important;
+    }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,168,76,.13) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      animation: pulse 5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+      50% { transform: translate(-50%,-50%) scale(1.12); opacity: .65; }
+    }
+
+    .avatar-ring {
+      width: 148px; height: 148px;
+      border-radius: 50%;
+      padding: 3px;
+      margin: 0 auto 28px;
+      background: var(--gradient);
+      position: relative;
+    }
+
+    .avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      background: var(--dark);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+
+    .avatar-inner img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201,168,76,.1);
+      border: 1px solid rgba(201,168,76,.25);
+      color: var(--accent2);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 20px;
+    }
+
+    .ig-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #fff 60%, rgba(255,255,255,.35));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-tagline {
+      font-size: clamp(.95rem, 2.5vw, 1.2rem);
+      color: var(--gray);
+      font-weight: 300;
+      max-width: 520px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
+    }
+
+    .hero-tagline span { color: var(--accent2); font-weight: 500; }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: block;
+    }
+
+    .stat-label {
+      font-size: .72rem;
+      color: var(--gray);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--gradient);
+      color: var(--black);
+      padding: 15px 34px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-size: .92rem;
+      text-decoration: none;
+      transition: transform .3s, box-shadow .3s;
+      box-shadow: 0 0 28px rgba(201,168,76,.28);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 36px rgba(201,168,76,.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--white);
+      padding: 15px 34px;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: .92rem;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color .3s, background .3s;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      background: rgba(201,168,76,.06);
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--gray);
+      font-size: .68rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      animation: bounce 2.2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(9px); }
+    }
+
+    /* SECTIONS */
+    section { padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 700; line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .section-subtitle {
+      color: var(--gray); font-size: .97rem;
+      line-height: 1.72; max-width: 580px;
+    }
+
+    .divider {
+      width: 56px; height: 2px;
+      background: var(--gradient);
+      border-radius: 2px;
+    }
+
+    /* ABOUT */
+    #about { background: var(--dark); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 6rem;
+      position: relative;
+    }
+
+    .about-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      position: absolute; inset: 0;
+    }
+
+    .about-card-badge {
+      position: absolute;
+      bottom: 20px; left: 20px; right: 20px;
+      background: rgba(10,10,10,.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .badge-dot {
+      width: 9px; height: 9px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: blink 1.6s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; } 50% { opacity: .25; }
+    }
+
+    .badge-text { font-size: .83rem; font-weight: 500; }
+    .badge-sub { font-size: .7rem; color: var(--gray); }
+
+    .float-card {
+      position: absolute;
+      top: -18px; right: -18px;
+      background: var(--gradient);
+      border-radius: 14px;
+      padding: 14px 18px;
+      color: var(--black);
+      font-weight: 700;
+      font-size: .85rem;
+      text-align: center;
+      box-shadow: 0 8px 28px rgba(201,168,76,.3);
+    }
+
+    .float-card-num { font-size: 1.7rem; display: block; font-weight: 900; }
+
+    .about-para {
+      color: var(--gray); line-height: 1.82;
+      margin-bottom: 18px; font-size: .95rem;
+    }
+
+    .about-para strong { color: var(--white); font-weight: 600; }
+
+    .tags {
+      display: flex; flex-wrap: wrap;
+      gap: 8px; margin-top: 26px;
+    }
+
+    .tag {
+      background: rgba(201,168,76,.08);
+      border: 1px solid rgba(201,168,76,.2);
+      color: var(--accent2);
+      padding: 5px 13px;
+      border-radius: 100px;
+      font-size: .76rem;
+      font-weight: 500;
+    }
+
+    /* CONTENT GRID */
+    #content { background: var(--black); }
+
+    .content-header { text-align: center; margin-bottom: 56px; }
+
+    .ig-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .ig-item {
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .ig-item-inner {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      transition: transform .4s;
+    }
+
+    .ig-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,.82);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity .3s;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .ig-item:hover .ig-overlay { opacity: 1; }
+    .ig-item:hover .ig-item-inner { transform: scale(1.06); }
+
+    .ig-overlay-title { font-weight: 700; font-size: .88rem; margin-bottom: 5px; }
+    .ig-overlay-text { font-size: .73rem; color: var(--gray); line-height: 1.5; }
+
+    /* SERVICES */
+    #services { background: var(--dark); }
+    .services-header { text-align: center; margin-bottom: 56px; }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 22px;
+    }
+
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 34px 30px;
+      transition: border-color .3s, transform .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gradient);
+      transform: scaleX(0);
+      transition: transform .35s;
+      transform-origin: left;
+    }
+
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-card:hover { border-color: rgba(201,168,76,.28); transform: translateY(-4px); }
+
+    .service-icon {
+      width: 50px; height: 50px;
+      background: rgba(201,168,76,.1);
+      border-radius: 13px;
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    .service-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+
+    .service-desc { color: var(--gray); font-size: .86rem; line-height: 1.7; margin-bottom: 18px; }
+
+    .service-link {
+      color: var(--accent2); font-size: .8rem; font-weight: 600;
+      text-decoration: none; letter-spacing: .04em;
+      display: inline-flex; align-items: center; gap: 5px;
+      transition: gap .3s;
+    }
+
+    .service-link:hover { gap: 9px; }
+
+    /* TESTIMONIALS */
+    #testimonials { background: var(--black); }
+    .testimonials-header { text-align: center; margin-bottom: 56px; }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 22px;
+    }
+
+    .testimonial-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 30px;
+    }
+
+    .testimonial-quote {
+      font-size: 2.8rem; line-height: 1;
+      color: var(--accent);
+      margin-bottom: 14px;
+      font-family: Georgia, serif;
+      opacity: .55;
+    }
+
+    .stars { color: var(--accent); font-size: .82rem; margin-bottom: 14px; }
+
+    .testimonial-text {
+      color: rgba(255,255,255,.78);
+      font-size: .9rem; line-height: 1.78;
+      margin-bottom: 22px; font-style: italic;
+    }
+
+    .testimonial-author { display: flex; align-items: center; gap: 12px; }
+
+    .author-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--gradient);
+      display: flex; align-items: center;
+      justify-content: center;
+      font-size: 1rem; color: var(--black);
+      font-weight: 700; flex-shrink: 0;
+    }
+
+    .author-name { font-weight: 600; font-size: .88rem; }
+    .author-role { color: var(--gray); font-size: .75rem; }
+
+    /* CTA */
+    #cta { background: var(--dark); text-align: center; }
+
+    .cta-box {
+      background: radial-gradient(ellipse at center top, rgba(201,168,76,.1) 0%, transparent 65%);
+      border: 1px solid rgba(201,168,76,.18);
+      border-radius: 30px;
+      padding: 76px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 20%; right: 20%;
+      height: 1px;
+      background: var(--gradient);
+    }
+
+    .cta-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      margin-bottom: 14px; line-height: 1.15;
+    }
+
+    .cta-sub {
+      color: var(--gray); font-size: .97rem;
+      max-width: 480px; margin: 0 auto 38px;
+      line-height: 1.7;
+    }
+
+    .social-links {
+      display: flex; gap: 14px;
+      justify-content: center; flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .social-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1px solid var(--border);
+      color: var(--white); padding: 11px 20px;
+      border-radius: 100px; text-decoration: none;
+      font-size: .83rem; font-weight: 500;
+      transition: border-color .3s, background .3s;
+    }
+
+    .social-btn:hover { border-color: var(--accent); background: rgba(201,168,76,.07); }
+
+    /* FOOTER */
+    footer {
+      background: var(--black);
+      border-top: 1px solid var(--border);
+      padding: 36px 24px;
+      text-align: center;
+    }
+
+    .footer-name {
+      font-weight: 800; font-size: 1rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 7px;
+    }
+
+    .footer-sub { color: var(--gray); font-size: .78rem; }
+    .footer-sub a { color: var(--accent2); text-decoration: none; }
+
+    /* REVEAL */
+    .reveal {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 14px 18px; }
+      .nav-links { display: none; }
+      .about-grid { grid-template-columns: 1fr; gap: 44px; }
+      .about-visual { max-width: 340px; margin: 0 auto; }
+      .float-card { top: -10px; right: -10px; }
+      .hero-stats { gap: 24px; }
+      .stat-num { font-size: 1.5rem; }
+      section { padding: 68px 18px; }
+    }
+
+    @media (max-width: 480px) {
+      .ig-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-secondary { width: 100%; max-width: 280px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <span class="nav-logo">ALAN McCURDY</span>
+    <ul class="nav-links">
+      <li><a href="#about">Sobre mí</a></li>
+      <li><a href="#content">Contenido</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#cta" class="nav-cta">Contactar</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-glow"></div>
+    <div>
+      <div class="avatar-ring">
+        <div class="avatar-inner">
+          <!-- Foto de perfil desde Instagram via unavatar.io -->
+          <img
+            src="https://unavatar.io/instagram/alan_mccurdy"
+            alt="Alan McCurdy"
+            onerror="this.style.display='none'; this.parentNode.innerHTML='👤';"
+          />
+        </div>
+      </div>
+
+      <div class="hero-badge">
+        <span class="ig-dot"></span>
+        @alan_mccurdy · Instagram
+      </div>
+
+      <h1 class="hero-name">Alan McCurdy</h1>
+
+      <p class="hero-tagline">
+        Creando <span>contenido auténtico</span> que conecta, inspira<br>y deja huella en cada persona que lo consume.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num" id="seg-count">—</span>
+          <span class="stat-label">Seguidores</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">100%</span>
+          <span class="stat-label">Auténtico</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">24h</span>
+          <span class="stat-label">Respuesta</span>
+        </div>
+      </div>
+
+      <div class="hero-buttons">
+        <a href="https://instagram.com/alan_mccurdy" target="_blank" class="btn-primary">
+          Seguirme en Instagram
+        </a>
+        <a href="#cta" class="btn-secondary">Trabajemos juntos</a>
+      </div>
+
+      <div class="scroll-indicator">
+        <span>Scroll</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12l7 7 7-7"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-visual reveal" style="position:relative;">
+          <div class="about-card">
+            <img
+              src="https://unavatar.io/instagram/alan_mccurdy"
+              alt="Alan McCurdy"
+              onerror="this.style.display='none'; this.parentNode.innerHTML+='👤';"
+            />
+            <div class="about-card-badge">
+              <div class="badge-dot"></div>
+              <div>
+                <div class="badge-text">Disponible para proyectos</div>
+                <div class="badge-sub">Respondo en menos de 24h</div>
+              </div>
+            </div>
+          </div>
+          <div class="float-card">
+            <span class="float-card-num">✦</span>
+            Creador<br>Digital
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <span class="section-label">Sobre mí</span>
+          <h2 class="section-title">Hola, soy<br>Alan McCurdy</h2>
+          <p class="about-para">
+            <strong>Soy creador de contenido apasionado</strong> por conectar con las personas a través de historias reales, visuals impactantes y mensajes que generan valor genuino en cada publicación.
+          </p>
+          <p class="about-para">
+            Desde hace años construyo una comunidad basada en la <strong>autenticidad y la consistencia</strong>. Creo que el contenido más poderoso es el que mueve algo en quien lo ve — ya sea una idea, una emoción, o una acción concreta.
+          </p>
+          <p class="about-para">
+            Mi objetivo es simple: <strong>crear contenido que importe</strong>, colaborar con marcas que comparten mis valores y seguir creciendo junto a mi comunidad día a día.
+          </p>
+          <div class="tags">
+            <span class="tag">✦ Contenido Digital</span>
+            <span class="tag">✦ Personal Branding</span>
+            <span class="tag">✦ Colaboraciones</span>
+            <span class="tag">✦ Fotografía</span>
+            <span class="tag">✦ Lifestyle</span>
+            <span class="tag">✦ Creatividad</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT GRID -->
+  <section id="content">
+    <div class="container">
+      <div class="content-header reveal">
+        <span class="section-label">Contenido</span>
+        <h2 class="section-title">Lo que creo</h2>
+        <p class="section-subtitle" style="margin: 12px auto 0;">Las áreas de contenido en las que genero mayor impacto con mi comunidad.</p>
+      </div>
+
+      <div class="ig-grid reveal reveal-delay-1">
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a1a2e,#16213e);">📸</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Fotografía</div><div class="ig-overlay-text">Capturas que cuentan historias sin palabras</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a1207,#2a1f0a);">🌟</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Lifestyle</div><div class="ig-overlay-text">El arte de vivir con intención y propósito</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#0f1a14,#0a1a12);">🎯</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Motivación</div><div class="ig-overlay-text">Mensajes que activan el potencial de cada persona</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a0a1a,#120a1f);">🎬</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Video & Reels</div><div class="ig-overlay-text">Contenido dinámico de alta retención</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#0a1520,#0a1025);">💡</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Tips & Valor</div><div class="ig-overlay-text">Conocimiento accionable para mi comunidad</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a1010,#1a0f0a);">🤝</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Colaboraciones</div><div class="ig-overlay-text">Proyectos con marcas y creadores afines</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#0a1a0a,#0a180f);">🌍</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Viajes</div><div class="ig-overlay-text">Explorando el mundo y sus culturas</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a1520,#100f1a);">✨</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Creatividad</div><div class="ig-overlay-text">Proyectos artísticos y expresión personal</div></div>
+        </div>
+        <div class="ig-item">
+          <div class="ig-item-inner" style="background:linear-gradient(135deg,#1a1000,#2a1a00);">🔥</div>
+          <div class="ig-overlay"><div class="ig-overlay-title">Destacado</div><div class="ig-overlay-text">El contenido más viral de la comunidad</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section id="services">
+    <div class="container">
+      <div class="services-header reveal">
+        <span class="section-label">¿En qué puedo ayudarte?</span>
+        <h2 class="section-title">Servicios</h2>
+        <p class="section-subtitle" style="margin: 0 auto;">Trabajo con marcas, emprendedores y creativos que quieren generar impacto real.</p>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-icon">📱</div>
+          <div class="service-title">Colaboraciones & UGC</div>
+          <div class="service-desc">Contenido auténtico para tu marca que conecte de verdad. Sin guiones forzados, solo historias reales que convierten.</div>
+          <a href="#cta" class="service-link">Hablemos →</a>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-icon">🎥</div>
+          <div class="service-title">Contenido para Redes</div>
+          <div class="service-desc">Producción de posts, reels y stories con estrategia y estética cuidada. Cada pieza diseñada para generar engagement real.</div>
+          <a href="#cta" class="service-link">Ver propuesta →</a>
+        </div>
+        <div class="service-card reveal reveal-delay-3">
+          <div class="service-icon">🤝</div>
+          <div class="service-title">Brand Ambassador</div>
+          <div class="service-desc">Representación continua de tu marca en mis plataformas con presencia auténtica y consistente frente a mi comunidad.</div>
+          <a href="#cta" class="service-link">Solicitar info →</a>
+        </div>
+        <div class="service-card reveal reveal-delay-4">
+          <div class="service-icon">📊</div>
+          <div class="service-title">Consultoría de Contenido</div>
+          <div class="service-desc">Revisamos tu estrategia y definimos un plan para crecer tu presencia digital de forma consistente y sostenible.</div>
+          <a href="#cta" class="service-link">Agendar sesión →</a>
+        </div>
+        <div class="service-card reveal reveal-delay-1">
+          <div class="service-icon">✉️</div>
+          <div class="service-title">Menciones & Stories</div>
+          <div class="service-desc">Presentaciones orgánicas en mis historias. El formato más natural para generar confianza en tu producto o servicio.</div>
+          <a href="#cta" class="service-link">Ver tarifas →</a>
+        </div>
+        <div class="service-card reveal reveal-delay-2">
+          <div class="service-icon">🎯</div>
+          <div class="service-title">Proyectos Especiales</div>
+          <div class="service-desc">Eventos, campañas, lanzamientos — cualquier proyecto creativo que necesite una voz auténtica y audiencia comprometida.</div>
+          <a href="#cta" class="service-link">Cuéntame tu idea →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="testimonials-header reveal">
+        <span class="section-label">Lo que dicen</span>
+        <h2 class="section-title">Experiencias</h2>
+        <div class="divider" style="margin-top:18px;"></div>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="stars">★★★★★</div>
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">Trabajar con Alan fue una experiencia increíble. Su forma de presentar nuestro producto fue completamente natural y genuina. Los resultados superaron nuestras expectativas.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">M</div>
+            <div><div class="author-name">María G.</div><div class="author-role">Brand Manager</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="stars">★★★★★</div>
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">El nivel de creatividad y profesionalismo es impresionante. Entendió perfectamente nuestra visión y la tradujo en contenido que resonó con su audiencia de forma orgánica.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">C</div>
+            <div><div class="author-name">Carlos R.</div><div class="author-role">CEO — Marca de Lifestyle</div></div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-3">
+          <div class="stars">★★★★★</div>
+          <div class="testimonial-quote">"</div>
+          <p class="testimonial-text">Lo que más valoro es su autenticidad. No solo cumple con el contenido pactado, sino que lo hace con una energía y calidad que se nota en cada interacción de la audiencia.</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">S</div>
+            <div><div class="author-name">Sofía L.</div><div class="author-role">Directora de Marketing</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta">
+    <div class="container">
+      <div class="cta-box reveal">
+        <span class="section-label" style="display:block;margin-bottom:14px;">¿Listo para colaborar?</span>
+        <h2 class="cta-title">Hagamos algo<br><em>increíble juntos</em></h2>
+        <p class="cta-sub">Si tienes una marca, un proyecto, o simplemente quieres conectar — estoy a un mensaje de distancia.</p>
+
+        <div class="hero-buttons" style="justify-content:center;">
+          <a href="mailto:alandzks@gmail.com" class="btn-primary">✉ Enviar mensaje</a>
+          <a href="https://instagram.com/alan_mccurdy" target="_blank" class="btn-secondary">📱 DM en Instagram</a>
+        </div>
+
+        <div class="social-links">
+          <a href="https://instagram.com/alan_mccurdy" target="_blank" class="social-btn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <circle cx="12" cy="12" r="4"/>
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+            </svg>
+            @alan_mccurdy
+          </a>
+          <a href="https://tiktok.com/@alan_mccurdy" target="_blank" class="social-btn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.2 8.2 0 004.79 1.53V6.77a4.85 4.85 0 01-1.02-.08z"/>
+            </svg>
+            TikTok
+          </a>
+          <a href="mailto:alandzks@gmail.com" class="social-btn">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            Email
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-name">ALAN McCURDY</div>
+    <p class="footer-sub">
+      <a href="https://instagram.com/alan_mccurdy" target="_blank">@alan_mccurdy</a>
+      · 2025 · Todos los derechos reservados
+    </p>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.1 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Nav opacity on scroll
+    const nav = document.querySelector('nav');
+    window.addEventListener('scroll', () => {
+      nav.style.background = window.scrollY > 60
+        ? 'rgba(10,10,10,.96)' : 'rgba(10,10,10,.7)';
+    });
+
+    // Smooth anchor scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+
+    // Grid tilt effect
+    document.querySelectorAll('.ig-item').forEach(item => {
+      item.addEventListener('mousemove', e => {
+        const r = item.getBoundingClientRect();
+        const x = ((e.clientX - r.left) / r.width - 0.5) * 8;
+        const y = ((e.clientY - r.top) / r.height - 0.5) * 8;
+        item.style.transform = `perspective(400px) rotateY(${x}deg) rotateX(${-y}deg) scale(1.02)`;
+      });
+      item.addEventListener('mouseleave', () => {
+        item.style.transition = 'transform 0.4s ease';
+        item.style.transform = '';
+        setTimeout(() => item.style.transition = '', 400);
+      });
+    });
+
+    // Counter animation
+    function animateCount(el, target, suffix = '') {
+      let start = 0;
+      const step = Math.ceil(target / 60);
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { start = target; clearInterval(timer); }
+        el.textContent = start >= 1000
+          ? (start / 1000).toFixed(1).replace('.0','') + 'K' + suffix
+          : start + suffix;
+      }, 20);
+    }
+    setTimeout(() => {
+      const el = document.getElementById('seg-count');
+      if (el) animateCount(el, 10000);
+    }, 800);
+  </script>
+</body>
+</html>
