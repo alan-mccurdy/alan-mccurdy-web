@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sportium Consola — Bandeja Email</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #f2f2f7;
+      --surface:      rgba(255,255,255,0.72);
+      --surface-hi:   rgba(255,255,255,0.92);
+      --surface-full: #ffffff;
+      --border:       rgba(0,0,0,0.07);
+      --border-glass: rgba(255,255,255,0.6);
+      --text:         #1d1d1f;
+      --text-2:       #6e6e73;
+      --text-3:       #aeaeb2;
+      --accent:       #0071e3;
+      --accent-hi:    #147ce5;
+      --danger:       #c0202f;
+      --green:        #34c759;
+      --blur:         blur(28px) saturate(180%);
+      --sh-sm:        0 2px 10px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04);
+      --sh:           0 8px 32px rgba(0,0,0,0.08),0 2px 8px rgba(0,0,0,0.04);
+      --sh-lg:        0 20px 56px rgba(0,0,0,0.10),0 4px 14px rgba(0,0,0,0.06);
+      --r:            18px;
+      --r-sm:         12px;
+      --r-lg:         24px;
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: -apple-system, 'Helvetica Neue', 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      height: 52px;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 20px;
+      background: rgba(255,255,255,0.82);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+      position: relative; z-index: 10; flex-shrink: 0;
+    }
+
+    .hd-left { display: flex; align-items: center; gap: 14px; }
+
+    .hd-logo {
+      font-size: .88rem; font-weight: 800;
+      letter-spacing: .04em; color: var(--text);
+    }
+    .hd-logo span { color: var(--accent); }
+
+    .hd-badge {
+      background: rgba(0,113,227,.08);
+      border: 1px solid rgba(0,113,227,.18);
+      color: var(--accent);
+      font-size: .68rem; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 100px;
+    }
+
+    .hd-right { display: flex; align-items: center; gap: 10px; }
+
+    .status-pill {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid var(--border);
+      border-radius: 100px; padding: 4px 12px;
+      font-size: .72rem; color: var(--text-2); font-weight: 500;
+    }
+
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 5px rgba(52,199,89,.5);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── MAIN LAYOUT ── */
+    .layout {
+      flex: 1; display: flex; overflow: hidden;
+      padding: 14px; gap: 12px;
+    }
+
+    /* ── SIDEBAR / BANDEJA ── */
+    .bandeja {
+      width: 320px; flex-shrink: 0;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+
+    .panel {
+      background: var(--surface);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--r-lg);
+      box-shadow: var(--sh-sm);
+    }
+
+    .panel-hd {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .panel-title {
+      font-size: .78rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase;
+      color: var(--text-2);
+    }
+
+    .count-badge {
+      background: var(--accent);
+      color: #fff; font-size: .65rem; font-weight: 700;
+      padding: 2px 7px; border-radius: 100px;
+    }
+
+    .msg-list { flex: 1; overflow-y: auto; padding: 6px; }
+    .msg-list::-webkit-scrollbar { width: 4px; }
+    .msg-list::-webkit-scrollbar-track { background: transparent; }
+    .msg-list::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 4px; }
+
+    .msg-item {
+      padding: 12px 12px;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background .18s;
+      border: 1px solid transparent;
+      margin-bottom: 2px;
+    }
+    .msg-item:hover { background: rgba(255,255,255,0.6); }
+    .msg-item.active {
+      background: rgba(0,113,227,.07);
+      border-color: rgba(0,113,227,.18);
+    }
+    .msg-item.respondido { opacity: .55; }
+
+    .msg-from {
+      font-size: .82rem; font-weight: 600; color: var(--text);
+      margin-bottom: 2px; display: flex; align-items: center; gap: 6px;
+    }
+    .msg-unread-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .msg-item.respondido .msg-unread-dot { background: var(--text-3); }
+
+    .msg-subject { font-size: .78rem; color: var(--text-2); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .msg-preview { font-size: .72rem; color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .msg-meta { font-size: .68rem; color: var(--text-3); margin-top: 5px; text-align: right; }
+
+    /* add manual form */
+    .add-form { padding: 10px; border-top: 1px solid rgba(0,0,0,0.05); }
+    .add-form input {
+      width: 100%; font-size: .78rem; padding: 8px 12px;
+      background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,0,0,0.09);
+      border-radius: 10px; color: var(--text);
+      outline: none; transition: border .2s;
+      font-family: inherit;
+    }
+    .add-form input:focus { border-color: var(--accent); }
+    .add-form button {
+      margin-top: 6px; width: 100%;
+      background: rgba(0,113,227,.09);
+      border: 1px solid rgba(0,113,227,.2);
+      border-radius: 10px; padding: 8px;
+      font-size: .75rem; font-weight: 600; color: var(--accent);
+      cursor: pointer; transition: background .2s;
+      font-family: inherit;
+    }
+    .add-form button:hover { background: rgba(0,113,227,.15); }
+
+    /* ── DETAIL PANE ── */
+    .detail {
+      flex: 1; display: flex; flex-direction: column; gap: 10px;
+      min-width: 0; overflow: hidden;
+    }
+
+    .detail-main {
+      flex: 1; display: flex; flex-direction: column;
+      min-height: 0;
+    }
+
+    .msg-header {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .msg-asunto {
+      font-size: 1.05rem; font-weight: 700;
+      color: var(--text); margin-bottom: 6px;
+    }
+
+    .msg-info {
+      display: flex; gap: 16px; flex-wrap: wrap;
+    }
+    .msg-info-item { font-size: .78rem; color: var(--text-2); }
+    .msg-info-item strong { color: var(--text); font-weight: 600; }
+
+    .msg-body {
+      flex: 1; padding: 18px 20px;
+      font-size: .9rem; line-height: 1.75;
+      color: var(--text-2); overflow-y: auto;
+    }
+    .msg-body::-webkit-scrollbar { width: 4px; }
+    .msg-body::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
+
+    /* ── SUGERENCIA PANEL ── */
+    .sug-panel {
+      background: var(--surface);
+      backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+      border: 1px solid var(--border-glass);
+      border-radius: var(--r-lg); box-shadow: var(--sh-sm);
+      flex-shrink: 0;
+    }
+
+    .sug-hd {
+      padding: 13px 16px 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .sug-title {
+      font-size: .76rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .05em; color: var(--text-2);
+    }
+
+    .sug-actions { display: flex; gap: 6px; }
+
+    .sug-body { padding: 12px 16px; }
+
+    .sug-empty {
+      font-size: .82rem; color: var(--text-3);
+      text-align: center; padding: 18px 0;
+    }
+
+    .sug-text {
+      font-size: .86rem; line-height: 1.72;
+      color: var(--text); background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,113,227,.12);
+      border-radius: var(--r-sm); padding: 12px 14px;
+      min-height: 80px; margin-bottom: 10px;
+    }
+
+    .sug-text-input {
+      width: 100%; font-size: .86rem; line-height: 1.72;
+      color: var(--text); background: rgba(255,255,255,0.7);
+      border: 1px solid rgba(0,113,227,.2);
+      border-radius: var(--r-sm); padding: 12px 14px;
+      min-height: 80px; resize: vertical;
+      outline: none; transition: border .2s;
+      font-family: inherit; display: none;
+    }
+    .sug-text-input:focus { border-color: var(--accent); }
+
+    .sug-foot {
+      display: flex; gap: 8px; padding: 0 16px 14px;
+      justify-content: flex-end;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .78rem; font-weight: 600;
+      padding: 7px 14px; border-radius: 100px;
+      border: none; cursor: pointer;
+      transition: opacity .2s, transform .15s;
+      font-family: inherit;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn:disabled { opacity: .4; cursor: default; }
+
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 2px 10px rgba(0,113,227,.28);
+    }
+    .btn-primary:hover:not(:disabled) { background: var(--accent-hi); }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.75);
+      border: 1px solid var(--border);
+      color: var(--text-2);
+      box-shadow: var(--sh-sm);
+    }
+    .btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,.95); color: var(--text); }
+
+    .btn-danger {
+      background: rgba(192,32,47,.08);
+      border: 1px solid rgba(192,32,47,.18);
+      color: var(--danger);
+    }
+    .btn-danger:hover:not(:disabled) { background: rgba(192,32,47,.14); }
+
+    .btn-success {
+      background: rgba(52,199,89,.1);
+      border: 1px solid rgba(52,199,89,.25);
+      color: #1a8b3a;
+    }
+    .btn-success:hover:not(:disabled) { background: rgba(52,199,89,.18); }
+
+    /* ── TOAST ── */
+    #toast-container {
+      position: fixed; bottom: 20px; right: 20px;
+      display: flex; flex-direction: column; gap: 8px;
+      z-index: 200;
+    }
+    .toast-item {
+      background: rgba(30,30,30,0.88);
+      backdrop-filter: blur(20px);
+      color: #fff; padding: 10px 18px;
+      border-radius: 12px; font-size: .82rem;
+      box-shadow: var(--sh);
+      animation: slideIn .25s ease;
+    }
+    @keyframes slideIn { from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
+
+    /* ── LOADING SPINNER ── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,113,227,.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── PLACEHOLDER ── */
+    .placeholder {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px; padding: 40px;
+    }
+    .placeholder svg { opacity: .18; }
+    .placeholder p { font-size: .88rem; color: var(--text-3); text-align: center; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .bandeja { width: 260px; }
+    }
+    @media (max-width: 600px) {
+      .layout { flex-direction: column; padding: 8px; gap: 8px; }
+      .bandeja { width: 100%; height: 280px; flex-direction: row; overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="hd-left">
+      <span class="hd-logo">SPORTIUM <span>CONSOLA</span></span>
+      <span class="hd-badge">Canal Email</span>
+    </div>
+    <div class="hd-right">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span id="status-txt">Modo manual</span>
+      </div>
+      <button class="btn btn-ghost" id="btn-refresh" title="Actualizar bandeja">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Actualizar
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- BANDEJA -->
+    <aside class="bandeja">
+      <div class="panel" style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div class="panel-hd">
+          <span class="panel-title">Bandeja de entrada</span>
+          <span class="count-badge" id="count-badge">0</span>
+        </div>
+        <div class="msg-list" id="msg-list"></div>
+        <div class="add-form">
+          <input type="text" id="add-from" placeholder="De: nombre@empresa.com" />
+          <input type="text" id="add-subject" placeholder="Asunto..." style="margin-top:5px;" />
+          <textarea id="add-body" rows="3"
+            style="width:100%;margin-top:5px;padding:8px 12px;font-size:.78rem;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.09);border-radius:10px;resize:none;outline:none;font-family:inherit;color:var(--text);"
+            placeholder="Contenido del correo..."></textarea>
+          <button id="btn-add-manual">+ Agregar correo manual</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- DETAIL -->
+    <main class="detail">
+      <div class="panel detail-main" id="detail-panel">
+        <div class="placeholder" id="placeholder">
+          <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <p>Selecciona un correo de la bandeja<br>para ver su contenido</p>
+        </div>
+        <div id="detail-content" style="display:none;flex:1;display:flex;flex-direction:column;overflow:hidden;">
+          <div class="msg-header">
+            <div class="msg-asunto" id="d-asunto">—</div>
+            <div class="msg-info">
+              <div class="msg-info-item"><strong>De:</strong> <span id="d-from">—</span></div>
+              <div class="msg-info-item"><strong>Hora:</strong> <span id="d-time">—</span></div>
+              <div class="msg-info-item" id="d-estado-wrap" style="display:none;">
+                <strong>Estado:</strong> <span id="d-estado" style="color:var(--green);font-weight:600;">Respondido</span>
+              </div>
+            </div>
+          </div>
+          <div class="msg-body" id="d-body">—</div>
+        </div>
+      </div>
+
+      <!-- SUGERENCIA -->
+      <div class="panel sug-panel" id="sug-panel" style="display:none;">
+        <div class="sug-hd">
+          <span class="sug-title">Sugerencia de tono</span>
+          <div class="sug-actions">
+            <button class="btn btn-ghost" id="btn-sug-pedir" title="Pedir sugerencia de tono">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-linecap="round" stroke-width="2"/>
+              </svg>
+              Pedir tono
+            </button>
+            <button class="btn btn-ghost" id="btn-sug-edit" title="Editar sugerencia">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+              Editar
+            </button>
+          </div>
+        </div>
+        <div class="sug-body">
+          <div class="sug-empty" id="sug-empty">Sin sugerencia — haz clic en "Pedir tono" para obtener una.</div>
+          <div class="sug-text" id="sug-text" style="display:none;"></div>
+          <textarea class="sug-text-input" id="sug-input" placeholder="Escribe o edita la sugerencia de tono..."></textarea>
+        </div>
+        <div class="sug-foot">
+          <button class="btn btn-ghost" id="btn-copiar" disabled>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>
+            Copiar
+          </button>
+          <button class="btn btn-success" id="btn-responder" disabled>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 14 4 9 9 4"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>
+            </svg>
+            Marcar respondido
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div id="toast-container"></div>
+
+  <script>
+    /* ─────────────────────────────────────────────
+       GLOBALS  (brief constraints: no redefinir)
+    ─────────────────────────────────────────────── */
+    const WEBHOOK = (window.SPORTIUM_WEBHOOK || '');
+    const BBHOOK  = WEBHOOK;
+
+    let turnoPais   = 'ES';
+    let turnOver    = false;
+    let ctxCache    = {};
+    const GLOS      = {};
+    const CONFIG    = { canal_email: true, version: '1.4.0' };
+    const sb        = null; // Supabase client — configurar externamente
+
+    /* ── toast ── */
+    function toast(msg, type) {
+      const c = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      el.className = 'toast-item';
+      el.style.borderLeft = type === 'error'
+        ? '3px solid #c0202f'
+        : type === 'ok'
+        ? '3px solid #34c759'
+        : '3px solid #0071e3';
+      el.textContent = msg;
+      c.appendChild(el);
+      setTimeout(() => el.remove(), 3200);
+    }
+
+    /* ─────────────────────────────────────────────
+       ESTADO
+    ─────────────────────────────────────────────── */
+    let mensajes = [];
+    let selIdx   = null;   // índice activo en mensajes[]
+
+    /* ─────────────────────────────────────────────
+       HELPERS  (canal chat — existentes)
+    ─────────────────────────────────────────────── */
+    function cpExtractarCliente(item) {
+      if (!item) return {};
+      return {
+        nombre: item.de || '',
+        contexto: item.asunto || '',
+        historial: item.cuerpo ? item.cuerpo.slice(0, 300) : '',
+      };
+    }
+
+    function cpPedirSugerencia(item, idx) {
+      if (!WEBHOOK) { toast('WEBHOOK no configurado', 'error'); return; }
+      const cliente = cpExtractarCliente(item);
+      return fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          canal: 'chat',
+          cliente,
+          pais: turnoPais,
+          config: CONFIG,
+        }),
+      }).then(r => r.json());
+    }
+
+    function cpSelect(item, idx, sugerencia) {
+      if (!item) return;
+      item.sugerencia = sugerencia;
+      if (selIdx === idx) renderSugerencia(item);
+    }
+
+    /* ─────────────────────────────────────────────
+       CANAL EMAIL — Task 4 implementations
+    ─────────────────────────────────────────────── */
+
+    function emPedirSugerencia(item, idx) {
+      if (!item) return;
+      if (!WEBHOOK) {
+        toast('WEBHOOK no configurado — agrega window.SPORTIUM_WEBHOOK', 'error');
+        return;
+      }
+      const cliente = cpExtractarCliente(item);
+      setSugLoading(true);
+      fetch(WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          canal: 'email',
+          cliente,
+          asunto: item.asunto || '',
+          pais: turnoPais,
+          config: CONFIG,
+        }),
+      })
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(data => {
+          const sug = data.sugerencia || data.tono || data.texto || '';
+          emSelect(item, idx, sug);
+          setSugLoading(false);
+          toast('Sugerencia de tono recibida', 'ok');
+        })
+        .catch(err => {
+          setSugLoading(false);
+          toast('Error al pedir sugerencia: ' + err.message, 'error');
+        });
+    }
+
+    function emSelect(item, idx, sugerencia) {
+      if (!item) return;
+      item.sugerencia = sugerencia;
+      if (selIdx === idx) renderSugerencia(item);
+    }
+
+    /* Segunda firma de emSelect — selección por UI (click en lista) */
+    function emSelect(item, idx, sugerencia) {
+      if (!item) return;
+      item.sugerencia = typeof sugerencia === 'string' ? sugerencia : item.sugerencia || '';
+      mensajes[idx] = item;
+      if (selIdx === idx) renderSugerencia(item);
+    }
+
+    function emAddManual(item, texto) {
+      if (!item || typeof texto !== 'string') return;
+      item.sugerencia = texto.trim();
+      const idx = mensajes.indexOf(item);
+      if (idx !== -1) emSelect(item, idx, item.sugerencia);
+    }
+
+    function emCopiar(texto) {
+      if (!texto) { toast('Nada que copiar', 'error'); return; }
+      navigator.clipboard.writeText(texto)
+        .then(() => toast('Copiado al portapapeles', 'ok'))
+        .catch(() => {
+          const ta = document.createElement('textarea');
+          ta.value = texto;
+          ta.style.cssText = 'position:fixed;opacity:0;';
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          ta.remove();
+          toast('Copiado al portapapeles', 'ok');
+        });
+    }
+
+    function emResponder(item) {
+      if (!item) return;
+      item.respondido = true;
+      renderLista();
+      renderEstado(item);
+      toast('Marcado como respondido (local)', 'ok');
+    }
+
+    /* ─────────────────────────────────────────────
+       RENDER
+    ─────────────────────────────────────────────── */
+    function renderLista() {
+      const list = document.getElementById('msg-list');
+      document.getElementById('count-badge').textContent = mensajes.length;
+      list.innerHTML = '';
+      mensajes.forEach((m, i) => {
+        const el = document.createElement('div');
+        el.className = 'msg-item' + (i === selIdx ? ' active' : '') + (m.respondido ? ' respondido' : '');
+        el.innerHTML = `
+          <div class="msg-from">
+            <div class="msg-unread-dot"></div>
+            ${escHtml(m.de || 'Sin remitente')}
+          </div>
+          <div class="msg-subject">${escHtml(m.asunto || '(Sin asunto)')}</div>
+          <div class="msg-preview">${escHtml((m.cuerpo || '').slice(0, 60))}...</div>
+          <div class="msg-meta">${m.hora || ''}</div>`;
+        el.addEventListener('click', () => seleccionarMensaje(i));
+        list.appendChild(el);
+      });
+    }
+
+    function seleccionarMensaje(idx) {
+      selIdx = idx;
+      const item = mensajes[idx];
+      document.getElementById('placeholder').style.display = 'none';
+      const dc = document.getElementById('detail-content');
+      dc.style.display = 'flex';
+      document.getElementById('d-asunto').textContent = item.asunto || '(Sin asunto)';
+      document.getElementById('d-from').textContent   = item.de || '—';
+      document.getElementById('d-time').textContent   = item.hora || '—';
+      document.getElementById('d-body').textContent   = item.cuerpo || '';
+      document.getElementById('sug-panel').style.display = '';
+      renderEstado(item);
+      renderSugerencia(item);
+      renderLista();
+    }
+
+    function renderEstado(item) {
+      const wrap = document.getElementById('d-estado-wrap');
+      wrap.style.display = item.respondido ? '' : 'none';
+    }
+
+    function renderSugerencia(item) {
+      const empty  = document.getElementById('sug-empty');
+      const txt    = document.getElementById('sug-text');
+      const input  = document.getElementById('sug-input');
+      const btnCop = document.getElementById('btn-copiar');
+      const btnRes = document.getElementById('btn-responder');
+
+      const hasSug = !!(item && item.sugerencia);
+      empty.style.display = hasSug ? 'none' : '';
+      txt.style.display   = hasSug ? ''     : 'none';
+      if (hasSug) txt.textContent = item.sugerencia;
+      if (hasSug) input.value = item.sugerencia;
+
+      btnCop.disabled = !hasSug;
+      btnRes.disabled = !!(item && item.respondido);
+    }
+
+    function setSugLoading(on) {
+      const btn = document.getElementById('btn-sug-pedir');
+      btn.disabled = on;
+      btn.innerHTML = on
+        ? '<span class="spinner"></span> Procesando...'
+        : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" stroke-linecap="round" stroke-width="2"/></svg> Pedir tono`;
+    }
+
+    /* ─────────────────────────────────────────────
+       EVENTOS
+    ─────────────────────────────────────────────── */
+    document.getElementById('btn-sug-pedir').addEventListener('click', () => {
+      if (selIdx === null) { toast('Selecciona un correo primero', 'error'); return; }
+      emPedirSugerencia(mensajes[selIdx], selIdx);
+    });
+
+    let editMode = false;
+    document.getElementById('btn-sug-edit').addEventListener('click', () => {
+      editMode = !editMode;
+      const txt   = document.getElementById('sug-text');
+      const input = document.getElementById('sug-input');
+      const btn   = document.getElementById('btn-sug-edit');
+      if (editMode) {
+        txt.style.display   = 'none';
+        input.style.display = '';
+        input.focus();
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Guardar`;
+      } else {
+        const val = input.value.trim();
+        if (selIdx !== null && val) emAddManual(mensajes[selIdx], val);
+        input.style.display = 'none';
+        txt.style.display   = mensajes[selIdx]?.sugerencia ? '' : 'none';
+        btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar`;
+      }
+    });
+
+    document.getElementById('btn-copiar').addEventListener('click', () => {
+      if (selIdx === null) return;
+      const item = mensajes[selIdx];
+      const txt  = editMode
+        ? document.getElementById('sug-input').value
+        : item.sugerencia;
+      emCopiar(txt);
+    });
+
+    document.getElementById('btn-responder').addEventListener('click', () => {
+      if (selIdx === null) return;
+      emResponder(mensajes[selIdx]);
+    });
+
+    document.getElementById('btn-add-manual').addEventListener('click', () => {
+      const de      = document.getElementById('add-from').value.trim();
+      const asunto  = document.getElementById('add-subject').value.trim();
+      const cuerpo  = document.getElementById('add-body').value.trim();
+      if (!de && !asunto && !cuerpo) { toast('Completa al menos un campo', 'error'); return; }
+
+      const now = new Date();
+      const msg = {
+        id: 'em_' + Date.now(),
+        de:  de    || 'desconocido@sportium.es',
+        asunto:  asunto  || '(Sin asunto)',
+        cuerpo:  cuerpo  || '',
+        hora: now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
+        respondido: false,
+        sugerencia: '',
+      };
+      mensajes.unshift(msg);
+      selIdx = 0;
+      document.getElementById('add-from').value    = '';
+      document.getElementById('add-subject').value = '';
+      document.getElementById('add-body').value    = '';
+      renderLista();
+      seleccionarMensaje(0);
+      toast('Correo agregado', 'ok');
+    });
+
+    document.getElementById('btn-refresh').addEventListener('click', () => {
+      toast('Bandeja actualizada', 'ok');
+    });
+
+    /* ─────────────────────────────────────────────
+       UTIL
+    ─────────────────────────────────────────────── */
+    function escHtml(s) {
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    /* ─────────────────────────────────────────────
+       DEMO DATA
+    ─────────────────────────────────────────────── */
+    (function seedDemoData() {
+      const demos = [
+        {
+          id: 'em_001', de: 'patrocinio@marcadeportes.es',
+          asunto: 'Propuesta de colaboracion Q3 2025',
+          cuerpo: 'Hola,\n\nNos gustaría explorar una colaboración con Sportium para el tercer trimestre de 2025. Nuestra marca está muy alineada con los valores de su plataforma y creemos que podemos generar un impacto positivo para ambas partes.\n\nAdjunto encontrarás nuestra propuesta inicial. Quedamos a disposición para cualquier consulta.\n\nSaludos,\nEquipo de Patrocinios',
+          hora: '09:14', respondido: false, sugerencia: '',
+        },
+        {
+          id: 'em_002', de: 'soporte@liga-fantasy.es',
+          asunto: 'Incidencia en integracion API',
+          cuerpo: 'Buenos dias,\n\nHemos detectado un problema con la integracion de la API de estadisticas en tiempo real. Los datos de la jornada 28 no se estan actualizando correctamente desde las 08:30h.\n\nNecesitamos una respuesta urgente.\n\nGracias.',
+          hora: '10:42', respondido: false, sugerencia: '',
+        },
+        {
+          id: 'em_003', de: 'comunicacion@sportium.es',
+          asunto: 'Revision de nota de prensa — LaLiga',
+          cuerpo: 'Equipo,\n\nAdjunto la nota de prensa sobre el acuerdo con LaLiga para revisión. Por favor revisad el tono y los datos antes del envío previsto para el viernes.\n\nCualquier comentario antes del jueves al mediodia.\n\nGracias.',
+          hora: '11:55', respondido: true, sugerencia: 'Tono confirmado: institucional y positivo. Destacar el impacto para los aficionados.',
+        },
+      ];
+      mensajes = demos;
+      renderLista();
+    })();
+  </script>
+</body>
+</html>
