@@ -446,6 +446,41 @@
     }
     .ftab:hover:not(.active) { background: rgba(0,0,0,.04); }
 
+    /* ── SHORTCUT BAR ── */
+    .shortcut-bar {
+      height: 30px; flex-shrink: 0;
+      display: flex; align-items: center; gap: 2px;
+      padding: 0 18px;
+      background: rgba(255,255,255,0.60);
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(0,0,0,.05);
+      font-size: .68rem; color: var(--text-3);
+    }
+    .kb {
+      display: inline-flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(0,0,0,0.12);
+      border-bottom-width: 2px;
+      border-radius: 5px;
+      padding: 1px 6px;
+      font-size: .65rem; font-weight: 600; color: var(--text-2);
+      min-width: 20px;
+    }
+    .sc-sep { margin: 0 10px; color: rgba(0,0,0,0.1); }
+
+    /* ── MSG DELETE ── */
+    .msg-del {
+      position: absolute; top: 8px; right: 8px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: rgba(192,32,47,.08);
+      border: none; cursor: pointer; display: none;
+      align-items: center; justify-content: center;
+      transition: background .18s;
+    }
+    .msg-item { position: relative; }
+    .msg-item:hover .msg-del { display: flex; }
+    .msg-del:hover { background: rgba(192,32,47,.18); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .bandeja { width: 260px; }
@@ -627,6 +662,20 @@
     </main>
   </div>
 
+  <div class="shortcut-bar">
+    <span class="kb">↑</span>&nbsp;<span class="kb">↓</span>&nbsp;navegar
+    <span class="sc-sep">|</span>
+    <span class="kb">P</span>&nbsp;pedir tono
+    <span class="sc-sep">|</span>
+    <span class="kb">E</span>&nbsp;editar
+    <span class="sc-sep">|</span>
+    <span class="kb">C</span>&nbsp;copiar
+    <span class="sc-sep">|</span>
+    <span class="kb">R</span>&nbsp;responder
+    <span class="sc-sep">|</span>
+    <span class="kb">Esc</span>&nbsp;cerrar
+  </div>
+
   <div id="toast-container"></div>
 
   <script>
@@ -761,6 +810,7 @@
       item.sugerencia = texto.trim();
       const idx = mensajes.indexOf(item);
       if (idx !== -1) emSelect(item, idx, item.sugerencia);
+      guardarBandeja();
     }
 
     function emCopiar(texto) {
@@ -782,8 +832,10 @@
     function emResponder(item) {
       if (!item) return;
       item.respondido = true;
+      guardarBandeja();
       renderLista();
       renderEstado(item);
+      document.getElementById('btn-responder').disabled = true;
       toast('Marcado como respondido (local)', 'ok');
     }
 
@@ -824,10 +876,29 @@
           </div>
           <div class="msg-subject">${escHtml(m.asunto || '(Sin asunto)')}</div>
           <div class="msg-preview">${escHtml((m.cuerpo || '').slice(0, 60))}...</div>
-          <div class="msg-meta">${m.hora || ''}</div>`;
+          <div class="msg-meta">${m.hora || ''}</div>
+          <button class="msg-del" title="Eliminar">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#c0202f" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>`;
+        el.querySelector('.msg-del').addEventListener('click', ev => {
+          ev.stopPropagation();
+          mensajes.splice(i, 1);
+          if (selIdx === i) { selIdx = null; resetDetail(); }
+          else if (selIdx > i) selIdx--;
+          guardarBandeja();
+          renderLista();
+        });
         el.addEventListener('click', () => seleccionarMensaje(i));
         list.appendChild(el);
       });
+    }
+
+    function resetDetail() {
+      document.getElementById('placeholder').style.display = '';
+      document.getElementById('detail-content').style.display = 'none';
+      document.getElementById('sug-panel').style.display = 'none';
     }
 
     function seleccionarMensaje(idx) {
@@ -939,6 +1010,7 @@
       document.getElementById('add-from').value    = '';
       document.getElementById('add-subject').value = '';
       document.getElementById('add-body').value    = '';
+      guardarBandeja();
       renderLista();
       seleccionarMensaje(0);
       toast('Correo agregado', 'ok');
@@ -998,6 +1070,84 @@
     });
 
     /* ─────────────────────────────────────────────
+       PERSISTENCIA BANDEJA
+    ─────────────────────────────────────────────── */
+    function guardarBandeja() {
+      try { localStorage.setItem('sportium_bandeja', JSON.stringify(mensajes)); } catch(_) {}
+    }
+
+    function cargarBandeja() {
+      try {
+        const raw = localStorage.getItem('sportium_bandeja');
+        if (raw) { mensajes = JSON.parse(raw); return true; }
+      } catch(_) {}
+      return false;
+    }
+
+    /* ─────────────────────────────────────────────
+       TECLADO
+    ─────────────────────────────────────────────── */
+    document.addEventListener('keydown', e => {
+      const tag = document.activeElement?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      if (document.getElementById('modal-overlay').classList.contains('open')) {
+        if (e.key === 'Escape') closeModal();
+        return;
+      }
+
+      const visible = mensajesFiltrados();
+      const posActual = visible.findIndex(({ i }) => i === selIdx);
+
+      switch (e.key) {
+        case 'ArrowDown':
+        case 'j': {
+          e.preventDefault();
+          const next = visible[posActual + 1] ?? visible[0];
+          if (next) { seleccionarMensaje(next.i); scrollMsgToView(next.i); }
+          break;
+        }
+        case 'ArrowUp':
+        case 'k': {
+          e.preventDefault();
+          const prev = visible[posActual - 1] ?? visible[visible.length - 1];
+          if (prev) { seleccionarMensaje(prev.i); scrollMsgToView(prev.i); }
+          break;
+        }
+        case 'p':
+        case 'P':
+          if (selIdx !== null) emPedirSugerencia(mensajes[selIdx], selIdx);
+          break;
+        case 'c':
+        case 'C': {
+          if (selIdx === null) return;
+          const item = mensajes[selIdx];
+          if (item?.sugerencia) emCopiar(item.sugerencia);
+          break;
+        }
+        case 'r':
+        case 'R':
+          if (selIdx !== null && !mensajes[selIdx]?.respondido)
+            emResponder(mensajes[selIdx]);
+          break;
+        case 'e':
+        case 'E':
+          document.getElementById('btn-sug-edit').click();
+          break;
+        case 'Escape':
+          closeModal();
+          break;
+      }
+    });
+
+    function scrollMsgToView(idx) {
+      const list = document.getElementById('msg-list');
+      const items = list.querySelectorAll('.msg-item');
+      const visible = mensajesFiltrados();
+      const pos = visible.findIndex(({ i }) => i === idx);
+      if (items[pos]) items[pos].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+
+    /* ─────────────────────────────────────────────
        UTIL
     ─────────────────────────────────────────────── */
     function escHtml(s) {
@@ -1019,6 +1169,7 @@
        DEMO DATA
     ─────────────────────────────────────────────── */
     (function seedDemoData() {
+      if (cargarBandeja()) { renderLista(); return; }
       const demos = [
         {
           id: 'em_001', de: 'patrocinio@marcadeportes.es',
@@ -1040,6 +1191,7 @@
         },
       ];
       mensajes = demos;
+      guardarBandeja();
       renderLista();
     })();
   </script>
