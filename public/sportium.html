@@ -344,6 +344,108 @@
     .placeholder svg { opacity: .18; }
     .placeholder p { font-size: .88rem; color: var(--text-3); text-align: center; }
 
+    /* ── SEARCH ── */
+    .search-wrap {
+      padding: 8px 10px 6px;
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+    .search-input {
+      width: 100%; font-size: .78rem; padding: 7px 12px 7px 32px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 10px; color: var(--text);
+      outline: none; transition: border .2s;
+      font-family: inherit; position: relative;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-wrap { position: relative; }
+    .search-icon {
+      position: absolute; left: 19px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none; opacity: .35;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.28);
+      backdrop-filter: blur(8px);
+      z-index: 300;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .22s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(32px) saturate(200%);
+      border: 1px solid rgba(255,255,255,0.75);
+      border-radius: 24px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.18),0 4px 16px rgba(0,0,0,0.08);
+      width: 420px; max-width: calc(100vw - 32px);
+      overflow: hidden;
+      transform: scale(.94) translateY(8px);
+      transition: transform .22s;
+    }
+    .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+    .modal-hd {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-title { font-size: .9rem; font-weight: 700; color: var(--text); }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(0,0,0,0.06); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s;
+    }
+    .modal-close:hover { background: rgba(0,0,0,0.12); }
+
+    .modal-body { padding: 18px 20px; }
+
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: .74rem; font-weight: 600; color: var(--text-2); margin-bottom: 6px; letter-spacing: .04em; text-transform: uppercase; }
+    .field input, .field select {
+      width: 100%; font-size: .85rem; padding: 9px 13px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 12px; color: var(--text);
+      outline: none; transition: border .2s;
+      font-family: inherit;
+    }
+    .field input:focus, .field select:focus { border-color: var(--accent); }
+
+    .field-note { font-size: .72rem; color: var(--text-3); margin-top: 5px; }
+
+    .modal-foot {
+      padding: 0 20px 18px;
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+
+    /* ── FILTER TABS ── */
+    .filter-tabs {
+      display: flex; gap: 4px;
+      padding: 6px 10px 4px;
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+    .ftab {
+      font-size: .72rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 100px;
+      border: 1px solid transparent;
+      cursor: pointer; color: var(--text-2);
+      background: transparent; font-family: inherit;
+      transition: all .18s;
+    }
+    .ftab.active {
+      background: rgba(0,113,227,.08);
+      border-color: rgba(0,113,227,.2);
+      color: var(--accent);
+    }
+    .ftab:hover:not(.active) { background: rgba(0,0,0,.04); }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .bandeja { width: 260px; }
@@ -373,8 +475,58 @@
         </svg>
         Actualizar
       </button>
+      <button class="btn btn-ghost" id="btn-settings" title="Configuración">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+        Config
+      </button>
     </div>
   </header>
+
+  <!-- MODAL CONFIG -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <div class="modal-hd">
+        <span class="modal-title">Configuración del conector</span>
+        <button class="modal-close" id="modal-close">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="field">
+          <label>WEBHOOK URL</label>
+          <input type="url" id="cfg-webhook" placeholder="https://tu-endpoint.com/hook" />
+          <div class="field-note">Endpoint POST que recibe las peticiones de sugerencia de tono.</div>
+        </div>
+        <div class="field">
+          <label>Turno / Pais</label>
+          <select id="cfg-pais">
+            <option value="ES">ES — Espana</option>
+            <option value="MX">MX — Mexico</option>
+            <option value="AR">AR — Argentina</option>
+            <option value="CO">CO — Colombia</option>
+            <option value="US">US — Estados Unidos</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Modo</label>
+          <select id="cfg-modo">
+            <option value="manual">Manual (sin WEBHOOK)</option>
+            <option value="webhook">Conectado (WEBHOOK activo)</option>
+          </select>
+          <div class="field-note">En modo manual, "Pedir tono" no hace llamadas externas.</div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost" id="cfg-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="cfg-save">Guardar</button>
+      </div>
+    </div>
+  </div>
 
   <div class="layout">
     <!-- BANDEJA -->
@@ -383,6 +535,17 @@
         <div class="panel-hd">
           <span class="panel-title">Bandeja de entrada</span>
           <span class="count-badge" id="count-badge">0</span>
+        </div>
+        <div class="search-wrap">
+          <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input class="search-input" id="search-input" type="search" placeholder="Buscar correos..." />
+        </div>
+        <div class="filter-tabs">
+          <button class="ftab active" data-filter="todos">Todos</button>
+          <button class="ftab" data-filter="pendientes">Pendientes</button>
+          <button class="ftab" data-filter="respondidos">Respondidos</button>
         </div>
         <div class="msg-list" id="msg-list"></div>
         <div class="add-form">
@@ -470,15 +633,21 @@
     /* ─────────────────────────────────────────────
        GLOBALS  (brief constraints: no redefinir)
     ─────────────────────────────────────────────── */
-    const WEBHOOK = (window.SPORTIUM_WEBHOOK || '');
+    const _cfg = JSON.parse(localStorage.getItem('sportium_cfg') || '{}');
+
+    const WEBHOOK = window.SPORTIUM_WEBHOOK || _cfg.webhook || '';
     const BBHOOK  = WEBHOOK;
 
-    let turnoPais   = 'ES';
+    let turnoPais   = _cfg.pais || 'ES';
     let turnOver    = false;
     let ctxCache    = {};
     const GLOS      = {};
-    const CONFIG    = { canal_email: true, version: '1.4.0' };
+    const CONFIG    = { canal_email: true, version: '1.4.0', modo: _cfg.modo || 'manual' };
     const sb        = null; // Supabase client — configurar externamente
+
+    /* estado de filtro/búsqueda */
+    let filtroActivo = 'todos';
+    let busqueda     = '';
 
     /* ── toast ── */
     function toast(msg, type) {
@@ -540,13 +709,16 @@
 
     function emPedirSugerencia(item, idx) {
       if (!item) return;
-      if (!WEBHOOK) {
-        toast('WEBHOOK no configurado — agrega window.SPORTIUM_WEBHOOK', 'error');
+      const wh = localStorage.getItem('sportium_cfg')
+        ? (JSON.parse(localStorage.getItem('sportium_cfg')).webhook || WEBHOOK)
+        : WEBHOOK;
+      if (!wh || CONFIG.modo === 'manual') {
+        toast('Modo manual — edita la sugerencia directamente con "Editar"', 'error');
         return;
       }
       const cliente = cpExtractarCliente(item);
       setSugLoading(true);
-      fetch(WEBHOOK, {
+      fetch(wh, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -618,11 +790,31 @@
     /* ─────────────────────────────────────────────
        RENDER
     ─────────────────────────────────────────────── */
+    function mensajesFiltrados() {
+      const q = busqueda.toLowerCase();
+      return mensajes.map((m, i) => ({ m, i })).filter(({ m }) => {
+        const pasaFiltro =
+          filtroActivo === 'todos' ||
+          (filtroActivo === 'pendientes'  && !m.respondido) ||
+          (filtroActivo === 'respondidos' &&  m.respondido);
+        const pasaBusqueda = !q ||
+          (m.de      || '').toLowerCase().includes(q) ||
+          (m.asunto  || '').toLowerCase().includes(q) ||
+          (m.cuerpo  || '').toLowerCase().includes(q);
+        return pasaFiltro && pasaBusqueda;
+      });
+    }
+
     function renderLista() {
       const list = document.getElementById('msg-list');
-      document.getElementById('count-badge').textContent = mensajes.length;
+      const items = mensajesFiltrados();
+      document.getElementById('count-badge').textContent = items.length;
       list.innerHTML = '';
-      mensajes.forEach((m, i) => {
+      if (!items.length) {
+        list.innerHTML = '<div style="text-align:center;padding:24px 12px;font-size:.78rem;color:var(--text-3);">Sin resultados</div>';
+        return;
+      }
+      items.forEach(({ m, i }) => {
         const el = document.createElement('div');
         el.className = 'msg-item' + (i === selIdx ? ' active' : '') + (m.respondido ? ' respondido' : '');
         el.innerHTML = `
@@ -756,6 +948,55 @@
       toast('Bandeja actualizada', 'ok');
     });
 
+    /* ── BÚSQUEDA ── */
+    document.getElementById('search-input').addEventListener('input', e => {
+      busqueda = e.target.value;
+      renderLista();
+    });
+
+    /* ── FILTRO TABS ── */
+    document.querySelectorAll('.ftab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filtroActivo = btn.dataset.filter;
+        renderLista();
+      });
+    });
+
+    /* ── MODAL CONFIG ── */
+    function openModal() {
+      const saved = JSON.parse(localStorage.getItem('sportium_cfg') || '{}');
+      document.getElementById('cfg-webhook').value = saved.webhook || WEBHOOK || '';
+      document.getElementById('cfg-pais').value    = saved.pais    || turnoPais;
+      document.getElementById('cfg-modo').value    = saved.modo    || CONFIG.modo;
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    document.getElementById('btn-settings').addEventListener('click', openModal);
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('cfg-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-overlay').addEventListener('click', e => {
+      if (e.target === document.getElementById('modal-overlay')) closeModal();
+    });
+
+    document.getElementById('cfg-save').addEventListener('click', () => {
+      const webhook = document.getElementById('cfg-webhook').value.trim();
+      const pais    = document.getElementById('cfg-pais').value;
+      const modo    = document.getElementById('cfg-modo').value;
+      localStorage.setItem('sportium_cfg', JSON.stringify({ webhook, pais, modo }));
+      turnoPais   = pais;
+      CONFIG.modo = modo;
+      /* Actualizar status pill */
+      document.getElementById('status-txt').textContent =
+        modo === 'webhook' && webhook ? 'WEBHOOK activo' : 'Modo manual';
+      closeModal();
+      toast('Configuracion guardada', 'ok');
+    });
+
     /* ─────────────────────────────────────────────
        UTIL
     ─────────────────────────────────────────────── */
@@ -764,6 +1005,15 @@
         .replace(/&/g,'&amp;').replace(/</g,'&lt;')
         .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
+
+    /* ── STATUS INICIAL ── */
+    (function initStatus() {
+      const saved = JSON.parse(localStorage.getItem('sportium_cfg') || '{}');
+      const modo  = saved.modo || 'manual';
+      const wh    = saved.webhook || '';
+      document.getElementById('status-txt').textContent =
+        modo === 'webhook' && wh ? 'WEBHOOK activo' : 'Modo manual';
+    })();
 
     /* ─────────────────────────────────────────────
        DEMO DATA
