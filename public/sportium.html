@@ -589,6 +589,14 @@
           <textarea id="add-body" rows="3"
             style="width:100%;margin-top:5px;padding:8px 12px;font-size:.78rem;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.09);border-radius:10px;resize:none;outline:none;font-family:inherit;color:var(--text);"
             placeholder="Contenido del correo..."></textarea>
+          <select id="add-pais" style="width:100%;margin-top:5px;padding:8px 12px;font-size:.78rem;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.09);border-radius:10px;outline:none;font-family:inherit;color:var(--text);cursor:pointer;">
+            <option value="">País del remitente (usa config global si vacío)</option>
+            <option value="ES">ES — España</option>
+            <option value="MX">MX — México</option>
+            <option value="AR">AR — Argentina</option>
+            <option value="CO">CO — Colombia</option>
+            <option value="US">US — Estados Unidos</option>
+          </select>
           <button id="btn-add-manual">+ Agregar correo manual</button>
         </div>
       </div>
@@ -610,6 +618,17 @@
             <div class="msg-info">
               <div class="msg-info-item"><strong>De:</strong> <span id="d-from">—</span></div>
               <div class="msg-info-item"><strong>Hora:</strong> <span id="d-time">—</span></div>
+              <div class="msg-info-item">
+                <strong>País:</strong> <span id="d-pais" style="font-weight:600;">—</span>
+                <button id="btn-cambiar-pais" style="margin-left:8px;background:none;border:1px solid rgba(0,0,0,.12);border-radius:6px;padding:1px 7px;font-size:.68rem;cursor:pointer;color:var(--text-2);font-family:inherit;">cambiar</button>
+                <select id="d-pais-sel" style="display:none;margin-left:6px;font-size:.72rem;padding:2px 6px;border:1px solid rgba(0,0,0,.12);border-radius:6px;font-family:inherit;">
+                  <option value="ES">ES — España</option>
+                  <option value="MX">MX — México</option>
+                  <option value="AR">AR — Argentina</option>
+                  <option value="CO">CO — Colombia</option>
+                  <option value="US">US — Estados Unidos</option>
+                </select>
+              </div>
               <div class="msg-info-item" id="d-estado-wrap" style="display:none;">
                 <strong>Estado:</strong> <span id="d-estado" style="color:var(--green);font-weight:600;">Respondido</span>
               </div>
@@ -762,10 +781,11 @@
         ? (JSON.parse(localStorage.getItem('sportium_cfg')).webhook || WEBHOOK)
         : WEBHOOK;
       if (!wh || CONFIG.modo === 'manual') {
-        toast('Modo manual — edita la sugerencia directamente con "Editar"', 'error');
+        toast('Modo manual — usa "Editar" para escribir la sugerencia directamente', 'error');
         return;
       }
       const cliente = cpExtractarCliente(item);
+      const paisMensaje = item.pais || turnoPais;
       setSugLoading(true);
       fetch(wh, {
         method: 'POST',
@@ -774,16 +794,24 @@
           canal: 'email',
           cliente,
           asunto: item.asunto || '',
-          pais: turnoPais,
+          cuerpo: item.cuerpo || '',
+          pais: paisMensaje,
           config: CONFIG,
         }),
       })
-        .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(data => {
-          const sug = data.sugerencia || data.tono || data.texto || '';
+          /* Acepta distintos formatos de respuesta del webhook */
+          const sug = data.sugerencia || data.tono || data.texto || data.respuesta || data.message || data.output || '';
+          if (!sug) {
+            console.warn('[Sportium] Webhook respondió pero sin campo reconocido:', data);
+            toast('El webhook respondió sin sugerencia reconocida. Revisa la consola.', 'error');
+            setSugLoading(false);
+            return;
+          }
           emSelect(item, idx, sug);
           setSugLoading(false);
-          toast('Sugerencia de tono recibida', 'ok');
+          toast('Sugerencia recibida (país: ' + paisMensaje + ')', 'ok');
         })
         .catch(err => {
           setSugLoading(false);
@@ -793,15 +821,9 @@
 
     function emSelect(item, idx, sugerencia) {
       if (!item) return;
-      item.sugerencia = sugerencia;
-      if (selIdx === idx) renderSugerencia(item);
-    }
-
-    /* Segunda firma de emSelect — selección por UI (click en lista) */
-    function emSelect(item, idx, sugerencia) {
-      if (!item) return;
       item.sugerencia = typeof sugerencia === 'string' ? sugerencia : item.sugerencia || '';
       mensajes[idx] = item;
+      guardarBandeja();
       if (selIdx === idx) renderSugerencia(item);
     }
 
@@ -912,9 +934,19 @@
       document.getElementById('d-time').textContent   = item.hora || '—';
       document.getElementById('d-body').textContent   = item.cuerpo || '';
       document.getElementById('sug-panel').style.display = '';
+      renderPais(item);
       renderEstado(item);
       renderSugerencia(item);
       renderLista();
+    }
+
+    function renderPais(item) {
+      const paisEfectivo = item.pais || turnoPais;
+      document.getElementById('d-pais').textContent = paisEfectivo;
+      const sel = document.getElementById('d-pais-sel');
+      sel.value = paisEfectivo;
+      sel.style.display = 'none';
+      document.getElementById('btn-cambiar-pais').style.display = '';
     }
 
     function renderEstado(item) {
@@ -993,6 +1025,7 @@
       const de      = document.getElementById('add-from').value.trim();
       const asunto  = document.getElementById('add-subject').value.trim();
       const cuerpo  = document.getElementById('add-body').value.trim();
+      const pais    = document.getElementById('add-pais').value || '';
       if (!de && !asunto && !cuerpo) { toast('Completa al menos un campo', 'error'); return; }
 
       const now = new Date();
@@ -1001,6 +1034,7 @@
         de:  de    || 'desconocido@sportium.es',
         asunto:  asunto  || '(Sin asunto)',
         cuerpo:  cuerpo  || '',
+        pais: pais,
         hora: now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
         respondido: false,
         sugerencia: '',
@@ -1010,14 +1044,39 @@
       document.getElementById('add-from').value    = '';
       document.getElementById('add-subject').value = '';
       document.getElementById('add-body').value    = '';
+      document.getElementById('add-pais').value    = '';
       guardarBandeja();
       renderLista();
       seleccionarMensaje(0);
-      toast('Correo agregado', 'ok');
+      const paisLabel = pais || turnoPais;
+      toast('Correo agregado (país: ' + paisLabel + ')', 'ok');
     });
 
     document.getElementById('btn-refresh').addEventListener('click', () => {
       toast('Bandeja actualizada', 'ok');
+    });
+
+    /* ── CAMBIAR PAÍS POR MENSAJE ── */
+    document.getElementById('btn-cambiar-pais').addEventListener('click', () => {
+      document.getElementById('btn-cambiar-pais').style.display = 'none';
+      document.getElementById('d-pais-sel').style.display = '';
+      document.getElementById('d-pais-sel').focus();
+    });
+
+    document.getElementById('d-pais-sel').addEventListener('change', e => {
+      if (selIdx === null) return;
+      const nuevoPais = e.target.value;
+      mensajes[selIdx].pais = nuevoPais;
+      guardarBandeja();
+      document.getElementById('d-pais').textContent = nuevoPais;
+      e.target.style.display = 'none';
+      document.getElementById('btn-cambiar-pais').style.display = '';
+      toast('País actualizado a ' + nuevoPais, 'ok');
+    });
+
+    document.getElementById('d-pais-sel').addEventListener('blur', () => {
+      document.getElementById('d-pais-sel').style.display = 'none';
+      document.getElementById('btn-cambiar-pais').style.display = '';
     });
 
     /* ── BÚSQUEDA ── */
