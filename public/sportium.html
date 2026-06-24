@@ -481,6 +481,74 @@
     .msg-item:hover .msg-del { display: flex; }
     .msg-del:hover { background: rgba(192,32,47,.18); }
 
+    /* ── RAG INDICATOR en lista ── */
+    .msg-rag-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: .62rem; font-weight: 700; letter-spacing: .04em;
+      padding: 2px 7px; border-radius: 100px; margin-top: 4px;
+    }
+    .msg-rag-badge.completo {
+      background: rgba(52,199,89,.12);
+      border: 1px solid rgba(52,199,89,.3);
+      color: #1a8b3a;
+    }
+    .msg-rag-badge.parcial {
+      background: rgba(255,159,10,.1);
+      border: 1px solid rgba(255,159,10,.28);
+      color: #a0620a;
+    }
+
+    /* ── PANEL RESPUESTA ENVIADA ── */
+    .resp-panel {
+      display: none; flex-direction: column;
+      border-top: 2px solid rgba(52,199,89,.18);
+    }
+    .resp-hd {
+      padding: 12px 16px 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+    .resp-title {
+      font-size: .78rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase;
+      color: #1a8b3a;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .resp-saved-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green);
+      display: none;
+    }
+    .resp-body { padding: 10px 12px; flex: 1; }
+    .resp-textarea {
+      width: 100%; min-height: 90px; resize: vertical;
+      font-size: .82rem; font-family: inherit; color: var(--text);
+      background: rgba(255,255,255,.75);
+      border: 1px solid rgba(52,199,89,.25);
+      border-radius: 12px; padding: 10px 12px;
+      outline: none; transition: border .2s; line-height: 1.5;
+    }
+    .resp-textarea:focus { border-color: var(--green); }
+    .resp-foot {
+      padding: 6px 12px 10px;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .resp-hint { font-size: .68rem; color: var(--text-3); }
+
+    /* ── RAG STAT en header ── */
+    .rag-stat {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(52,199,89,.08);
+      border: 1px solid rgba(52,199,89,.22);
+      border-radius: 100px; padding: 4px 12px;
+      font-size: .72rem; color: #1a8b3a; font-weight: 600;
+      cursor: default;
+    }
+    .rag-stat-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--green);
+    }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .bandeja { width: 260px; }
@@ -499,6 +567,18 @@
       <span class="hd-badge">Canal Email</span>
     </div>
     <div class="hd-right">
+      <div class="rag-stat" id="rag-stat" title="Conversaciones con par completo (email + respuesta) listas para RAG">
+        <div class="rag-stat-dot"></div>
+        <span id="rag-stat-txt">0 / 0 RAG</span>
+      </div>
+      <button class="btn btn-ghost" id="btn-export-rag" title="Exportar conversaciones para RAG">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Exportar RAG
+      </button>
       <div class="status-pill">
         <div class="status-dot"></div>
         <span id="status-txt">Modo manual</span>
@@ -639,7 +719,7 @@
       </div>
 
       <!-- SUGERENCIA -->
-      <div class="panel sug-panel" id="sug-panel" style="display:none;">
+      <div class="panel sug-panel" id="sug-panel" style="display:none; flex-direction:column;">
         <div class="sug-hd">
           <span class="sug-title">Sugerencia de tono</span>
           <div class="sug-actions">
@@ -677,6 +757,40 @@
             Marcar respondido
           </button>
         </div>
+
+        <!-- RESPUESTA ENVIADA — sección RAG -->
+        <div class="resp-panel" id="resp-panel">
+          <div class="resp-hd">
+            <span class="resp-title">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Respuesta enviada al cliente
+              <div class="resp-saved-dot" id="resp-saved-dot"></div>
+            </span>
+            <span style="font-size:.68rem;color:var(--text-3);">Para RAG</span>
+          </div>
+          <div class="resp-body">
+            <textarea class="resp-textarea" id="resp-textarea"
+              placeholder="Pega aquí la respuesta real que enviaste al cliente. Esto alimenta la IA con ejemplos reales de cómo respondes..."></textarea>
+          </div>
+          <div class="resp-foot">
+            <span class="resp-hint" id="resp-hint">Sin respuesta guardada</span>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-ghost" id="btn-resp-limpiar" style="display:none;">
+                Limpiar
+              </button>
+              <button class="btn btn-primary" id="btn-resp-guardar">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                  <polyline points="17 21 17 13 7 13 7 21"/>
+                  <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                Guardar respuesta
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   </div>
@@ -691,6 +805,10 @@
     <span class="kb">C</span>&nbsp;copiar
     <span class="sc-sep">|</span>
     <span class="kb">R</span>&nbsp;responder
+    <span class="sc-sep">|</span>
+    <span class="kb">S</span>&nbsp;guardar respuesta RAG
+    <span class="sc-sep">|</span>
+    <span class="kb">X</span>&nbsp;exportar RAG
     <span class="sc-sep">|</span>
     <span class="kb">Esc</span>&nbsp;cerrar
   </div>
@@ -879,6 +997,12 @@
       });
     }
 
+    function renderRagStats() {
+      const total = mensajes.length;
+      const conResp = mensajes.filter(m => m.respuesta_enviada && m.respuesta_enviada.trim()).length;
+      document.getElementById('rag-stat-txt').textContent = conResp + ' / ' + total + ' RAG';
+    }
+
     function renderLista() {
       const list = document.getElementById('msg-list');
       const items = mensajesFiltrados();
@@ -889,6 +1013,15 @@
         return;
       }
       items.forEach(({ m, i }) => {
+        const tieneRespuesta = !!(m.respuesta_enviada && m.respuesta_enviada.trim());
+        const tieneSugerencia = !!(m.sugerencia && m.sugerencia.trim());
+        let ragBadge = '';
+        if (tieneRespuesta) {
+          ragBadge = '<span class="msg-rag-badge completo">✓ RAG listo</span>';
+        } else if (tieneSugerencia) {
+          ragBadge = '<span class="msg-rag-badge parcial">⟳ Falta respuesta real</span>';
+        }
+
         const el = document.createElement('div');
         el.className = 'msg-item' + (i === selIdx ? ' active' : '') + (m.respondido ? ' respondido' : '');
         el.innerHTML = `
@@ -898,7 +1031,8 @@
           </div>
           <div class="msg-subject">${escHtml(m.asunto || '(Sin asunto)')}</div>
           <div class="msg-preview">${escHtml((m.cuerpo || '').slice(0, 60))}...</div>
-          <div class="msg-meta">${m.hora || ''}</div>
+          <div class="msg-meta">${m.hora || ''}${m.pais ? ' · ' + escHtml(m.pais) : ''}</div>
+          ${ragBadge}
           <button class="msg-del" title="Eliminar">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#c0202f" stroke-width="2.5">
               <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
@@ -911,6 +1045,7 @@
           else if (selIdx > i) selIdx--;
           guardarBandeja();
           renderLista();
+          renderRagStats();
         });
         el.addEventListener('click', () => seleccionarMensaje(i));
         list.appendChild(el);
@@ -933,11 +1068,35 @@
       document.getElementById('d-from').textContent   = item.de || '—';
       document.getElementById('d-time').textContent   = item.hora || '—';
       document.getElementById('d-body').textContent   = item.cuerpo || '';
-      document.getElementById('sug-panel').style.display = '';
+      document.getElementById('sug-panel').style.display = 'flex';
       renderPais(item);
       renderEstado(item);
       renderSugerencia(item);
+      renderRespuesta(item);
       renderLista();
+    }
+
+    function renderRespuesta(item) {
+      const panel    = document.getElementById('resp-panel');
+      const textarea = document.getElementById('resp-textarea');
+      const hint     = document.getElementById('resp-hint');
+      const dot      = document.getElementById('resp-saved-dot');
+      const btnLimp  = document.getElementById('btn-resp-limpiar');
+
+      panel.style.display = 'flex';
+      const resp = item.respuesta_enviada || '';
+      textarea.value = resp;
+      if (resp) {
+        hint.textContent = 'Guardada · ' + (resp.length) + ' caracteres';
+        hint.style.color = '#1a8b3a';
+        dot.style.display = 'inline-block';
+        btnLimp.style.display = '';
+      } else {
+        hint.textContent = 'Sin respuesta guardada — pega aquí lo que enviaste';
+        hint.style.color = '';
+        dot.style.display = 'none';
+        btnLimp.style.display = 'none';
+      }
     }
 
     function renderPais(item) {
@@ -1055,6 +1214,68 @@
     document.getElementById('btn-refresh').addEventListener('click', () => {
       toast('Bandeja actualizada', 'ok');
     });
+
+    /* ── RESPUESTA ENVIADA (RAG) ── */
+    function guardarRespuestaReal(item, texto) {
+      if (!item) return;
+      item.respuesta_enviada = texto.trim();
+      guardarBandeja();
+      renderRespuesta(item);
+      renderLista();
+      renderRagStats();
+    }
+
+    document.getElementById('btn-resp-guardar').addEventListener('click', () => {
+      if (selIdx === null) return;
+      const texto = document.getElementById('resp-textarea').value;
+      if (!texto.trim()) { toast('Escribe la respuesta antes de guardar', 'error'); return; }
+      guardarRespuestaReal(mensajes[selIdx], texto);
+      toast('Respuesta guardada para RAG', 'ok');
+    });
+
+    document.getElementById('btn-resp-limpiar').addEventListener('click', () => {
+      if (selIdx === null) return;
+      if (!confirm('¿Borrar la respuesta guardada de este correo?')) return;
+      guardarRespuestaReal(mensajes[selIdx], '');
+      toast('Respuesta eliminada', 'ok');
+    });
+
+    /* ── EXPORTAR RAG ── */
+    function exportarRAG() {
+      const conResp = mensajes.filter(m => m.respuesta_enviada && m.respuesta_enviada.trim());
+      if (!conResp.length) {
+        toast('No hay conversaciones con respuesta guardada todavía', 'error');
+        return;
+      }
+      const payload = {
+        exportado: new Date().toISOString(),
+        total: mensajes.length,
+        con_respuesta: conResp.length,
+        conversaciones: conResp.map(m => ({
+          id: m.id,
+          fecha: m.hora || '',
+          pais: m.pais || turnoPais,
+          asunto: m.asunto || '',
+          email_recibido: {
+            de: m.de || '',
+            asunto: m.asunto || '',
+            cuerpo: m.cuerpo || '',
+          },
+          respuesta_enviada: m.respuesta_enviada,
+          sugerencia_ia: m.sugerencia || '',
+        })),
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href = url;
+      a.download = 'sportium-rag-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      toast('Exportado: ' + conResp.length + ' conversaciones para RAG', 'ok');
+    }
+
+    document.getElementById('btn-export-rag').addEventListener('click', exportarRAG);
 
     /* ── CAMBIAR PAÍS POR MENSAJE ── */
     document.getElementById('btn-cambiar-pais').addEventListener('click', () => {
@@ -1192,6 +1413,14 @@
         case 'E':
           document.getElementById('btn-sug-edit').click();
           break;
+        case 's':
+        case 'S':
+          if (selIdx !== null) document.getElementById('resp-textarea').focus();
+          break;
+        case 'x':
+        case 'X':
+          exportarRAG();
+          break;
         case 'Escape':
           closeModal();
           break;
@@ -1228,7 +1457,7 @@
        DEMO DATA
     ─────────────────────────────────────────────── */
     (function seedDemoData() {
-      if (cargarBandeja()) { renderLista(); return; }
+      if (cargarBandeja()) { renderLista(); renderRagStats(); return; }
       const demos = [
         {
           id: 'em_001', de: 'patrocinio@marcadeportes.es',
